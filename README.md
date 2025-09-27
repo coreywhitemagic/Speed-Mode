@@ -1,8 +1,27 @@
 # Speed-Mode
 Speed memory system
 
-To run type, read.exe file.txt
+This program is a simple tool designed to help you memorize scripts, speeches, or any line-by-line text.
 
-Pressing enter prints the next line and typing q quits. If you press space it starts over from the beginning.
 
-This code compiles on Windows Mac and Linux. It also runs on Android if you use Termux.
+📦 How to Run
+
+read.exe file.txt
+
+Replace file.txt with your script or text file.
+
+
+🕹 Controls
+
+Enter → Display the next line.
+
+Space → Restart from the beginning.
+
+Q → Quit the program.
+
+
+💻 Compatibility
+
+Works on Windows, macOS, and Linux.
+
+Also runs on Android using Termux.
