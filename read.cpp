@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstdlib>  // For system()
 
 #if defined(_WIN32) || defined(_WIN64)
 #include <conio.h>  // Windows: for _getch()
@@ -10,19 +11,28 @@ char getChar() {
 #else
 #include <termios.h>
 #include <unistd.h>
-// Linux/macOS: read one character without waiting for Enter
+// POSIX (Linux/macOS): read one character without waiting for Enter
 char getChar() {
     struct termios oldt, newt;
     char ch;
-    tcgetattr(STDIN_FILENO, &oldt);           // get current terminal attributes
+    tcgetattr(STDIN_FILENO, &oldt);           // Get current terminal settings
     newt = oldt;
-    newt.c_lflag &= ~(ICANON | ECHO);         // disable canonical mode and echo
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);  // set new attributes
-    ch = getchar();
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);  // restore old attributes
+    newt.c_lflag &= ~(ICANON | ECHO);         // Disable canonical mode and echo
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);  // Apply new settings
+    ch = getchar();                           // Read one character
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);  // Restore old settings
     return ch;
 }
 #endif
+
+// Cross-platform clear screen
+void clearScreen() {
+#if defined(_WIN32) || defined(_WIN64)
+    std::system("cls");   // Windows
+#else
+    std::system("clear"); // Linux/macOS
+#endif
+}
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
@@ -49,11 +59,12 @@ int main(int argc, char* argv[]) {
 #else
             if (ch == '\n') {  // Enter key on Linux/macOS
 #endif
-                std::cout << line << std::endl << std::endl;  // Add extra spacing here
+                std::cout << line << std::endl << std::endl;
             } else if (ch == ' ') {
-                file.clear();
-                file.seekg(0);
-                std::cout << "\nRestarting from beginning...\n\n";
+                clearScreen();  // Clear the screen on Space
+                file.clear();   // Reset EOF flag
+                file.seekg(0);  // Go back to beginning of file
+                std::cout << "Restarting from beginning...\n\n";
             } else if (ch == 'q' || ch == 'Q') {
                 std::cout << "\nQuitting program...\n";
                 break;
